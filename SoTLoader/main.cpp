@@ -10,7 +10,7 @@
 int main(int argc, char* argv[])
 {
 
-    const char* GAME_NAME = "Administrador de tareas";
+    const char* GAME_NAME = "Sea of Thieves";
     std::string dll_name;
     DWORD processID = 0;
     HANDLE process;
