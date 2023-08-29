@@ -4,7 +4,7 @@
 
 namespace logger {
 
-    std::string FILE_NAME = "SoTLoader.log";
+    std::string FILE_NAME = "logs/SoTLoader.log";
 
     template<typename = std::string>
     std::string getDateFormatted() {

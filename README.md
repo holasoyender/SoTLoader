@@ -7,10 +7,17 @@ This software is intended to be used for educational purposes only. I am not res
 ### Warning
 This software is provided "as is" without warranty of any kind. The author is not responsible for any damage caused by this software.
 
+## Localizations
+This injector automatically detects the language of the user, and it will show strings in the following languages:
+- English
+- Spanish
+
+Feel free to contribute with more localizations.
+
 ## How to use
 1. Download the latest release from the [releases page](https://github.com/holasoyender/SoTLoader/releases)
 2. Extract the zip file
-3. Move the DLL file you want to inject to the same folder as the executable
+3. Move the DLL file(s) you want to inject to the `libs` folder (create it if it doesn't exist)
 4. Run the executable, if you move more than one DLL file to the folder, you will be asked which one you want to inject
 
 ## Unloading the DLL

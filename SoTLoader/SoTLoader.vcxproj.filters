@@ -19,6 +19,9 @@
       <UniqueIdentifier>{4FC737F1-C7A5-4376-A066-2A32D752A2FF}</UniqueIdentifier>
       <Extensions>cpp;c;cc;cxx;c++;cppm;ixx;def;odl;idl;hpj;bat;asm;asmx</Extensions>
     </Filter>
+    <Filter Include="headers\locale">
+      <UniqueIdentifier>{8df5946d-a287-4ac8-997a-efb83585596d}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp">
@@ -29,12 +32,6 @@
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="stdafx.h">
-      <Filter>resources</Filter>
-    </ClInclude>
-    <ClInclude Include="targetver.h">
-      <Filter>resources</Filter>
-    </ClInclude>
     <ClInclude Include="resource.h">
       <Filter>headers</Filter>
     </ClInclude>
@@ -52,6 +49,18 @@
     </ClInclude>
     <ClInclude Include="utils\access.h">
       <Filter>headers\utils</Filter>
+    </ClInclude>
+    <ClInclude Include="stdafx.h">
+      <Filter>headers</Filter>
+    </ClInclude>
+    <ClInclude Include="targetver.h">
+      <Filter>headers</Filter>
+    </ClInclude>
+    <ClInclude Include="locale\locale.h">
+      <Filter>headers\locale</Filter>
+    </ClInclude>
+    <ClInclude Include="locale\utils.h">
+      <Filter>headers\locale</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

@@ -4,6 +4,7 @@
 #include "injector/memory.h"
 #include "injector/files.h"
 #include "utils/access.h"
+#include "locale/locale.h"
 
 #define COMPILATION_DATE __DATE__ " " __TIME__
 
@@ -20,18 +21,40 @@ int main(int argc, char* argv[])
     LPVOID allocatedMem;
     HANDLE thread;
 
+    std::vector<std::string> dlls;
+
     SetConsoleTitle(L"Sea of Thieves DLL Loader - " COMPILATION_DATE);
 
-    std::vector<std::string> dlls = GetFilesInDirectoryWithExtension(CurrentPath(), ".dll");
+    if (!std::filesystem::exists("logs")) {
+		std::filesystem::create_directory("logs");
+	}
+
+    if (!std::filesystem::exists("locale")) {
+        logger::error("The \"locale\" directory is missing, please download the latest release from https://github.com/holasoyender/SoTLoader");
+        system("pause");
+        return 0;
+    }
+
+    std::string langCode = getSystemLang();
+    logger::info("Detected system language: ", langCode);
+    Locale lang(langCode);
+
+    if (!std::filesystem::exists("libs")) {
+        std::filesystem::create_directory("libs");
+        logger::info(lang.get("created_libs_folder"));
+        goto EXIT;
+    }
+
+    dlls = GetFilesInDirectoryWithExtension(CurrentPath() + "\\libs", ".dll");
 
     switch (dlls.size()) {
         {
     case 0:
-        logger::error("No DLLs found in current directory, please place DLLs in the same directory as this executable.");
+        logger::error(lang.get("no_dlls_found"));
         goto EXIT;
         }
     case 1:
-        logger::info("Found 1 DLL: ", dlls[0]);
+        logger::info(lang.get("found_one"), dlls[0]);
         dll_name = dlls[0];
         break;
     default:
@@ -43,9 +66,9 @@ int main(int argc, char* argv[])
             dlls_names_list += pos + ". " + dll_name + "\n";
         }
 
-        logger::warn("Found more than 1 DLL, please select one:\n", dlls_names_list);
+        logger::warn(lang.get("found_multiple"), dlls_names_list);
 
-        std::cout << "Enter DLL index: ";
+        std::cout << lang.get("input_index");
 
         int dll_index = 0;
         std::cin >> dll_index;
@@ -53,48 +76,55 @@ int main(int argc, char* argv[])
         break;
     }
 
-    logger::info("Loading DLL: ", dll_name.substr(dll_name.find_last_of("\\") + 1), "...");
+    logger::info(lang.get("loading_dll"), dll_name.substr(dll_name.find_last_of("\\") + 1), "...");
 
     if (hwndproc == NULL)
     {
-        logger::error("Game not found, please check that the game is running and try again.");
+        logger::error(lang.get("fail_game_not_found"));
         goto EXIT;
     }
 
     hr = GetWindowThreadProcessId(hwndproc, &processID);
     if (FAILED(hr)) {
-        logger::error("Failed to get process ID, HRESULT: ", hr);
+        logger::error(lang.get("fail_process_id"), hr);
         goto EXIT;
     }
 
-    logger::info("Process \"", GAME_NAME, "\" found with ID: ", processID);
+    logger::info(lang.get("found_process_id"), ", HRESULT: ", processID, " (", GAME_NAME, ")");
 
     if (!IsAdmin()) {
-		logger::error("Please run this program as administrator.");
+		logger::error(lang.get("fail_admin"));
 		goto EXIT;
 	}
 
     process = OpenProcess(PROCESS_CREATE_THREAD | PROCESS_QUERY_INFORMATION | PROCESS_VM_READ | PROCESS_VM_WRITE | PROCESS_VM_OPERATION, FALSE, processID);
     if (process == NULL) {
         auto Error = GetLastError();
-        logger::error("Failed to open process, HRESULT: ", hr, " Error: ", Error);
+        logger::error(lang.get("fail_open_process"), ", HRESULT: ", hr, " Error: ", Error);
         goto EXIT;
     }
 
     if (IsModuleInProcess(process, dll_name)) {
-        logger::error("That DLL is already loaded in the process. Do you want to unload it? (y/n)");
+        logger::error(lang.get("fail_already_loaded"), " (y/n)");
         char unload;
         std::cin >> unload;
 
         if (unload == 'y' || unload == 'Y' || unload == 's' || unload == 'S') {
             if (!UnloadModuleFromProcess(process, dll_name)) {
-				logger::error("Failed to unload DLL, HRESULT: ", hr);
+				logger::error(lang.get("fail_unload"), ", HRESULT: ", hr);
 				goto EXIT;
 			}
-            logger::info("DLL unloaded successfully, reloading...");
+
+            logger::info(lang.get("dll_unloaded"), " (y/n)");
+            char load;
+            std::cin >> load;
+            
+            if (load != 'y' && load != 'Y' && load != 's' && load != 'S') {
+                goto EXIT;
+            }
 		}
         else {
-			logger::info("DLL not loaded.");
+			logger::info(lang.get("dll_not_unloaded"));
 			goto EXIT;
 		}
     }
@@ -104,27 +134,27 @@ int main(int argc, char* argv[])
 
     allocatedMem = VirtualAllocEx(process, NULL, sizeof(dll_name_char), MEM_RESERVE | MEM_COMMIT, PAGE_READWRITE);
     if (allocatedMem == NULL) {
-        logger::error("Failed to allocate memory in process, HRESULT: ", hr);
+        logger::error(lang.get("fail_malloc"), ", HRESULT: ", hr);
         goto EXIT;
     }
 
     if (!WriteProcessMemory(process, allocatedMem, dll_name_char, sizeof(dll_name_char), NULL)) {
-        logger::error("Failed to write to process memory, HRESULT: ", hr);
+        logger::error(lang.get("fail_write_memory"), ", HRESULT: ", hr);
         goto EXIT;
     }
 
     thread = CreateRemoteThread(process, NULL, 0, (LPTHREAD_START_ROUTINE)LoadLibraryA, allocatedMem, 0, NULL);
     if (thread == NULL) {
-        logger::error("Failed to create remote thread, HRESULT: ", hr);
+        logger::error(lang.get("fail_create_thread"), ", HRESULT: ", hr);
         goto EXIT;
     }
 
     if (WaitForSingleObject(thread, INFINITE) == WAIT_FAILED) {
-		logger::error("Failed to wait for thread, HRESULT: ", hr);
-		goto EXIT;
+        logger::error(lang.get("fail_thread_wait"), ", HRESULT: ", hr);
+        goto EXIT;
 	}
 
-    logger::info("DLL loaded successfully!");
+    logger::info(lang.get("dll_loaded"));
     
     if (thread != NULL)
         CloseHandle(thread);
