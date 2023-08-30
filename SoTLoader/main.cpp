@@ -8,8 +8,7 @@
 
 #define COMPILATION_DATE __DATE__ " " __TIME__
 
-int main(int argc, char* argv[])
-{
+int start() {
 
     const char* GAME_NAME = "Sea of Thieves";
     std::string dll_name;
@@ -26,8 +25,8 @@ int main(int argc, char* argv[])
     SetConsoleTitle(L"Sea of Thieves DLL Loader - " COMPILATION_DATE);
 
     if (!std::filesystem::exists("logs")) {
-		std::filesystem::create_directory("logs");
-	}
+        std::filesystem::create_directory("logs");
+    }
 
     if (!std::filesystem::exists("locale")) {
         logger::error("The \"locale\" directory is missing, please download the latest release from https://github.com/holasoyender/SoTLoader");
@@ -93,9 +92,9 @@ int main(int argc, char* argv[])
     logger::info(lang.get("found_process_id"), ", HRESULT: ", processID, " (", GAME_NAME, ")");
 
     if (!IsAdmin()) {
-		logger::error(lang.get("fail_admin"));
-		goto EXIT;
-	}
+        logger::error(lang.get("fail_admin"));
+        goto EXIT;
+    }
 
     process = OpenProcess(PROCESS_CREATE_THREAD | PROCESS_QUERY_INFORMATION | PROCESS_VM_READ | PROCESS_VM_WRITE | PROCESS_VM_OPERATION, FALSE, processID);
     if (process == NULL) {
@@ -111,22 +110,22 @@ int main(int argc, char* argv[])
 
         if (unload == 'y' || unload == 'Y' || unload == 's' || unload == 'S') {
             if (!UnloadModuleFromProcess(process, dll_name)) {
-				logger::error(lang.get("fail_unload"), ", HRESULT: ", hr);
-				goto EXIT;
-			}
+                logger::error(lang.get("fail_unload"), ", HRESULT: ", hr);
+                goto EXIT;
+            }
 
             logger::info(lang.get("dll_unloaded"), " (y/n)");
             char load;
             std::cin >> load;
-            
+
             if (load != 'y' && load != 'Y' && load != 's' && load != 'S') {
                 goto EXIT;
             }
-		}
+        }
         else {
-			logger::info(lang.get("dll_not_unloaded"));
-			goto EXIT;
-		}
+            logger::info(lang.get("dll_not_unloaded"));
+            goto EXIT;
+        }
     }
 
     char dll_name_char[256];
@@ -152,14 +151,14 @@ int main(int argc, char* argv[])
     if (WaitForSingleObject(thread, INFINITE) == WAIT_FAILED) {
         logger::error(lang.get("fail_thread_wait"), ", HRESULT: ", hr);
         goto EXIT;
-	}
+    }
 
     logger::info(lang.get("dll_loaded"));
-    
+
     if (thread != NULL)
         CloseHandle(thread);
     if (process != NULL)
-		CloseHandle(process);
+        CloseHandle(process);
     if (hwndproc != NULL)
         CloseHandle(hwndproc);
     if (allocatedMem != NULL)
@@ -170,4 +169,10 @@ int main(int argc, char* argv[])
 EXIT:
     system("pause");
     return 0;
+}
+
+int main(int argc, char* argv[])
+{
+    __security_init_cookie();
+    start();
 }
