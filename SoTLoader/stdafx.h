@@ -13,3 +13,5 @@
 #include <vector>
 #include <filesystem>
 #include <psapi.h>
+#include <aclapi.h>
+#include <sddl.h>

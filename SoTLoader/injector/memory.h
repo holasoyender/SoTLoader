@@ -44,6 +44,36 @@ bool IsModuleInProcess(HANDLE handle, std::string moduleName) {
 	return isModulePresent != 0;
 }
 
+bool SetAccessControl(const char* path, const wchar_t* access)
+{
+	PSECURITY_DESCRIPTOR sec = nullptr;
+	PACL currentAcl = nullptr;
+	PSID sid = nullptr;
+	PACL newAcl = nullptr;
+	bool status = false;
+	EXPLICIT_ACCESSW desc = { 0 };
+	const wchar_t* file = reinterpret_cast<const wchar_t*>(path);
+
+	if (GetNamedSecurityInfoW(file, SE_FILE_OBJECT, DACL_SECURITY_INFORMATION, nullptr, nullptr, &currentAcl, nullptr, &sec) != ERROR_SUCCESS) goto EXIT;
+	if (!ConvertStringSidToSidW(access, &sid)) goto EXIT;
+	desc.grfAccessPermissions = GENERIC_READ | GENERIC_EXECUTE | GENERIC_WRITE;
+	desc.grfAccessMode = SET_ACCESS;
+	desc.grfInheritance = SUB_CONTAINERS_AND_OBJECTS_INHERIT;
+	desc.Trustee.TrusteeForm = TRUSTEE_IS_SID;
+	desc.Trustee.TrusteeType = TRUSTEE_IS_WELL_KNOWN_GROUP;
+	desc.Trustee.ptstrName = reinterpret_cast<wchar_t*>(sid);
+	if (SetEntriesInAclW(1, &desc, currentAcl, &newAcl) != ERROR_SUCCESS) goto EXIT;
+	if (SetNamedSecurityInfoW(const_cast<wchar_t*>(file), SE_FILE_OBJECT, DACL_SECURITY_INFORMATION, nullptr, nullptr, newAcl, nullptr) != ERROR_SUCCESS) goto EXIT;
+	status = true;
+	goto EXIT;
+
+EXIT:
+	if (newAcl) LocalFree(newAcl);
+	if (sid) LocalFree(sid);
+	if (sec) LocalFree(sec);
+	return status;
+}
+
 bool UnloadModuleFromProcess(HANDLE process, std::string moduleName) {
 	/*HMODULE hMods[1024];
 	DWORD cbNeeded;
