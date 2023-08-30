@@ -132,9 +132,9 @@ int start() {
     strcpy_s(dll_name_char, dll_name.c_str());
 
     if (SetAccessControl(dll_name.c_str(), L"S-1-15-2-1") == false) {
-		logger::error(lang.get("fail_set_access_control"), ", HRESULT: ", hr);
-		goto EXIT;
-	}
+        logger::error(lang.get("fail_set_access_control"), ", HRESULT: ", hr);
+        goto EXIT;
+    }
 
     allocatedMem = VirtualAllocEx(process, NULL, sizeof(dll_name_char), MEM_RESERVE | MEM_COMMIT, PAGE_READWRITE);
     if (allocatedMem == NULL) {
@@ -159,9 +159,9 @@ int start() {
     }
 
     if (VirtualFreeEx(process, allocatedMem, 0, MEM_RELEASE) == 0) {
-		logger::error(lang.get("fail_free_memory"), ", HRESULT: ", hr);
-		goto EXIT;
-	}
+        logger::error(lang.get("fail_free_memory"), ", HRESULT: ", hr);
+        goto EXIT;
+    }
 
     logger::info(lang.get("dll_loaded"));
 

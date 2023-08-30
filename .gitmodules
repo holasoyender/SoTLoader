@@ -1,3 +1,6 @@
 [submodule "yaml"]
 	path = yaml
 	url = https://github.com/jbeder/yaml-cpp
+[submodule "HookLib"]
+	path = HookLib
+	url = https://github.com/HoShiMin/HookLib
