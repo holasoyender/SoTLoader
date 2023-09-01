@@ -89,7 +89,7 @@ int start() {
         goto EXIT;
     }
 
-    logger::info(lang.get("found_process_id"), ", HRESULT: ", processID, " (", GAME_NAME, ")");
+    logger::info(lang.get("found_process_id"), processID, " (", GAME_NAME, ")");
 
     if (!IsAdmin()) {
         logger::error(lang.get("fail_admin"));
@@ -133,7 +133,6 @@ int start() {
 
     if (SetAccessControl(dll_name.c_str(), L"S-1-15-2-1") == false) {
         logger::error(lang.get("fail_set_access_control"), ", HRESULT: ", hr);
-        goto EXIT;
     }
 
     allocatedMem = VirtualAllocEx(process, NULL, sizeof(dll_name_char), MEM_RESERVE | MEM_COMMIT, PAGE_READWRITE);

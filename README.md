@@ -1,4 +1,5 @@
 # SoTLoader, DLL Injector for the game Sea of Thieves
+### [Español](docs/README-es.md) | [Русский](docs/README-ru.md)
 
 This is a simple DLL injector for the game **Sea of Thieves** that has been reverse engineered from a post on `UnknownCheats`. The injector is based on the `CreateRemoteThread` method and it uses the `LoadLibrary` function to load the DLL into the game process (The game does not have any anti-cheat).
 
@@ -11,6 +12,7 @@ This software is provided "as is" without warranty of any kind. The author is no
 This injector automatically detects the language of the user, and it will show strings in the following languages:
 - English
 - Spanish
+- Russian (thanks to exzyyy)
 
 Feel free to contribute with more localizations.
 
