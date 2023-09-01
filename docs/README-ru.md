@@ -29,5 +29,5 @@
 2. Откройте файл решения с помощью Visual Studio 2022 или более новой версии
 3. Скомпилируйте проект для `Release x64`.
 
-## Créditos
+## Лицензия
 Copyright (C) 2023 holasoyender, under the [GPL-3.0 License](../LICENSE)
