@@ -12,6 +12,7 @@ Este inyector detecta automáticamente el idioma del usuario, y mostrará las ca
 - English
 - Español
 - Русский (gracias a exzyyy)
+- Romanian (gracias a Ryukagu08)
 
 Siéntete libre de contribuir con más idiomas.
 
