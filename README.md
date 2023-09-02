@@ -13,6 +13,7 @@ This injector automatically detects the language of the user, and it will show s
 - English
 - Spanish
 - Russian (thanks to exzyyy)
+- Romanian (thanks to Ryukagu08)
 
 Feel free to contribute with more localizations.
 
