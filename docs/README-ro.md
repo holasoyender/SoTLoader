@@ -11,7 +11,7 @@ Acest software este oferit "așa cum este", fără nici un fel de garanție. Aut
 Acest injector detectează automat limba utilizatorului și va afișa șirurile de caractere în următoarele limbi:
 - English
 - Español
-- Русский (gracias a exzyyy)
+- Русский (mulțumită lui exzyyy)
 - Română (mulțumită lui Ryukagu08)
 
 Nu ezitați să contribuiți cu mai multe limbi.
